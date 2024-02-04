@@ -11,9 +11,9 @@
 
 module load gcc
 
-g++ -fopenmp -O3 -march=native -std=c++0x -fno-math-errno -c -o step-1.o step-1.cpp
+#g++ -fopenmp -O3 -march=native -std=c++0x -fno-math-errno -c -o step-1.o step-1.cpp
 
-g++ -fopenmp -O3 -march=native -std=c++0x -fno-math-errno step-1 NBodySimulation.o step-1.o
+#g++ -fopenmp -O3 -march=native -std=c++0x -fno-math-errno step-1 NBodySimulation.o step-1.o
 
 
 ./step-1 0.01  10.0  0.001    3.0 0.0 0.0  0.0 1.0 0.0  0.4     0.0 0.0 0.0  0.0 0.0 0.0  0.2     2.0 0.0 0.0  0.0 0.0 0.0  1.0     2.0 1.0 0.0  0.0 0.0 0.0  1.0     2.0 0.0 1.0  0.0 0.0 0.0  1.0
