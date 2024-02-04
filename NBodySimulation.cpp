@@ -3,7 +3,7 @@
 NBodySimulation::NBodySimulation () :
   t(0), tFinal(0), tPlot(0), tPlotDelta(0), NumberOfBodies(0),
   x(nullptr), v(nullptr), mass(nullptr),
-  timeStepSize(0), maxV(0), minDx(0), videoFile(nullptr),
+  timeStepSize(0), maxV(0), minDx(0), videoFile("paraview-output/result.pvd"),
   snapshotCounter(0), timeStepCounter(0) {};
 
 NBodySimulation::~NBodySimulation () {
