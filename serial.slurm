@@ -1,4 +1,3 @@
-./Hamilton/serial.slurm
 #!/bin/bash
 #SBATCH --job-name="step-1"
 #SBATCH -o step1.%A.out
