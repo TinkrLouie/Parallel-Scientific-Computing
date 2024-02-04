@@ -9,7 +9,9 @@
 #SBATCH --mem=1G       # memory required, up to 250G on standard nodes.
 #SBATCH --gres=tmp:1G  # temporary disk space required on the compute node ($TMPDIR), up to 400G
 
-module load g++
+module load gcc
+
+g++ -fopenmp -O3 -march=native -std=c++0x -fno-math-errno -c -o step-1.o step-1.cpp
 
 g++ -fopenmp -O3 -march=native -std=c++0x -fno-math-errno step-1 NBodySimulation.o step-1.o
 
