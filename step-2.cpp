@@ -77,19 +77,21 @@ class NBodySimulationMolecularForces : public NBodySimulation {
           // Mass of merged object
           mass[i] += mass[j];
 
-          // Remove other merged object from list
-          for (int k = j; k < NumberOfBodies - 1; k++) {
-          x[k] = x[k + 1];
-          v[k] = v[k + 1];
-          mass[k] = mass[k + 1];
-          }
-          NumberOfBodies--;
+          // Remove other merged object from list  
+          const int l = --NumberOfBodies;
+          for (int dim = 0; dim < 3; dim++) {
+	        x[j][dim] = x[l][dim];
+	        v[j][dim] = v[l][dim];
+          } 
+          force0[j] = force0[l];
+          force1[j] = force1[l];
+          force2[j] = force2[l];
+          mass[i] = mass[l];
           j--;
+	        }
+                  
         }
-
       }
-    }
-
       // x,y,z forces acting on particle 0 => to all particles
 
     for (int i = 0; i < NumberOfBodies; i++) {
