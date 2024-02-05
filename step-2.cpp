@@ -20,7 +20,6 @@ class NBodySimulationMolecularForces : public NBodySimulation {
   
   public:
   void updateBody () {
-    std::cout << "Successfully inherited" << std::endl;
     timeStepCounter++;
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
