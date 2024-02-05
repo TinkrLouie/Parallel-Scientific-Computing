@@ -23,7 +23,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
     timeStepCounter++;
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
-    double c = 0.01;
+    double c = 0.01/NumberOfBodies;
     // force0 = force along x direction
     // force1 = force along y direction
     // force2 = force along z direction
@@ -43,8 +43,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
 
     for (int i=0; i<NumberOfBodies; i++) {
       for (int j = i+1; j < NumberOfBodies; j++) {
-        if (i == j) continue;
-        double f0, f1, f2, dist;
+        double f0, f1, f2;
         f0 = force_calculation(i,j,0);    // force0[0] to [i]
         f1 = force_calculation(i,j,1);
         f2 = force_calculation(i,j,2);
