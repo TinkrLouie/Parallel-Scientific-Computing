@@ -48,7 +48,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
     //      force1[i] = 0.0;
     //      force2[i] = 0.0;
     //}
-
+    for (int p = 0; p < NumberOfBodies; p++) if (!particleInBucket[p]) particleInBucket[p] = 1;
     for (int bucket = 1; bucket < numBuckets+1; bucket++) {
       std::cout << "Bucket: " << bucket << std::endl;
       int i = 0;
@@ -60,6 +60,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
         if (particleInBucket[particle] != bucket) {
 	        continue;
         }
+        std::cout << "Particle: skip" << particle << std::endl;
         i = particle;
         // split dt into particleInBucket[j] portions, then perform them
         for (int iter = 0; iter < std::pow(2, bucket-1); iter++) {
