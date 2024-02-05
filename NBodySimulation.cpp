@@ -145,9 +145,9 @@ void NBodySimulation::updateBody () {
   for (int i=0; i<NumberOfBodies; i++) {
     for (int j = 0; j < NumberOfBodies; j++) {
       if (i == j) continue;
-      force0[i] += force_calculation(i,j,0);    // force0[0] to [i]
-      force1[i] += force_calculation(i,j,1);
-      force2[i] += force_calculation(i,j,2);
+      force0[i] += force_calculation(j,i,0);    // force0[0] to [i]
+      force1[i] += force_calculation(j,i,1);
+      force2[i] += force_calculation(j,i,2);
     }
   }
 
