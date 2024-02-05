@@ -43,89 +43,93 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       }
     }
     // Initialise forces to 0 
-    for (int i = 0; i < NumberOfBodies; i++) {
-          force0[i] = 0.0;
-          force1[i] = 0.0;
-          force2[i] = 0.0;
-    }
+    //for (int i = 0; i < NumberOfBodies; i++) {
+    //      force0[i] = 0.0;
+    //      force1[i] = 0.0;
+    //      force2[i] = 0.0;
+    //}
 
     for (int bucket = 1; bucket < numBuckets+1; bucket++) {
-    int i = 0;
-    double oldTimeStepSize = timeStepSize;
-    timeStepSize /= std::pow(2, bucket - 1);
-    // find all the particles belonging to the bucket
-    for (int particle = i; particle < NumberOfBodies; particle++) {
-      if (particleInBucket[particle] != bucket) {
-	      continue;
-      }
-      i = particle;
-      // split dt into particleInBucket[j] portions, then perform them
-      for (int iter = 0; iter < std::pow(2, bucket-1); iter++) {
-	      // zero force every partial timestep
-	      force0[i] = 0.0;
-        force1[i] = 0.0;
-        force2[i] = 0.0;
-	      for (int j = 0; j < NumberOfBodies; j++) {
-	        if (i == j) continue;
-          force0[i] += force_calculation(j,i,0);    // force0[0] to [i]
-          force1[i] += force_calculation(j,i,1);
-          force2[i] += force_calculation(j,i,2);
-
-          double distance = sqrt(
-                                 (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
-                                 (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
-                                 (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
-                                 );
-
-	        // check for collisions
-	        if (distance <= c*(mass[i] + mass[j])){
-            std::exit(0);
-            // Momentum calculations
-            x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
-            x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
-            x[i][2] = (mass[i]*x[i][2] + mass[j]*x[j][2]) / (mass[i]+mass[j]);
-
-            v[i][0] = (mass[i]*v[i][0] + mass[j]*v[j][0]) / (mass[i]+mass[j]);
-            v[i][1] = (mass[i]*v[i][1] + mass[j]*v[j][1]) / (mass[i]+mass[j]);
-            v[i][2] = (mass[i]*v[i][2] + mass[j]*v[j][2]) / (mass[i]+mass[j]);
-
-            // Mass of merged object
-            mass[i] += mass[j];
-
-
-            const int l = --NumberOfBodies;
-            // if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
-	          // std::cout << "Two remaining bodies merged." << std::endl;
-            // printSummary();
-            // closeParaviewVideoFile();
-	          // std::exit(0);
-            // }
-            // Remove other merged object from list
-            for (int dim = 0; dim < 3; dim++) {
-	          x[j][dim] = x[l][dim];
-	          v[j][dim] = v[l][dim];
-            } 
-            force0[j] = force0[l];
-            force1[j] = force1[l];
-            force2[j] = force2[l];
-            mass[j] = mass[l];
-            j--;
-	        }
-	      }
-	      for (int i = 0; i < NumberOfBodies; i++) {
-          x[i][0] = x[i][0] + timeStepSize * v[i][0];
-          x[i][1] = x[i][1] + timeStepSize * v[i][1];
-          x[i][2] = x[i][2] + timeStepSize * v[i][2];
-
-          v[i][0] = v[i][0] + timeStepSize * force0[i] / mass[i];
-          v[i][1] = v[i][1] + timeStepSize * force1[i] / mass[i];
-          v[i][2] = v[i][2] + timeStepSize * force2[i] / mass[i];
-
-          maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
+      std::cout << "Bucket: " << bucket << std::endl;
+      int i = 0;
+      double oldTimeStepSize = timeStepSize;
+      timeStepSize /= std::pow(2, bucket - 1);
+      // find all the particles belonging to the bucket
+      for (int particle = i; particle < NumberOfBodies; particle++) {
+        std::cout << "Particle: " << particle << std::endl;
+        if (particleInBucket[particle] != bucket) {
+	        continue;
         }
-    }
-    }
-    timeStepSize = oldTimeStepSize;
+        i = particle;
+        // split dt into particleInBucket[j] portions, then perform them
+        for (int iter = 0; iter < std::pow(2, bucket-1); iter++) {
+          std::cout << "Iters: " << iter << std::endl;
+	        // zero force every partial timestep
+	        force0[i] = 0.0;
+          force1[i] = 0.0;
+          force2[i] = 0.0;
+	        for (int j = 0; j < NumberOfBodies; j++) {
+            std::cout << "Inner j" << std::endl;
+	          if (i == j) continue;
+            force0[i] += force_calculation(j,i,0);    // force0[0] to [i]
+            force1[i] += force_calculation(j,i,1);
+            force2[i] += force_calculation(j,i,2);
+
+            double distance = sqrt(
+                                   (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
+                                   (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
+                                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
+                                   );
+            std::cout << "c*(mass[i] + mass[j]: " << c*(mass[i] + mass[j]) << ", distance: " << distance << std::endl;
+	          // check for collisions
+	          if (distance <= c*(mass[i] + mass[j])){
+              std::cout << "Merged" << std::endl;
+              // Momentum calculations
+              x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
+              x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
+              x[i][2] = (mass[i]*x[i][2] + mass[j]*x[j][2]) / (mass[i]+mass[j]);
+
+              v[i][0] = (mass[i]*v[i][0] + mass[j]*v[j][0]) / (mass[i]+mass[j]);
+              v[i][1] = (mass[i]*v[i][1] + mass[j]*v[j][1]) / (mass[i]+mass[j]);
+              v[i][2] = (mass[i]*v[i][2] + mass[j]*v[j][2]) / (mass[i]+mass[j]);
+
+              // Mass of merged object
+              mass[i] += mass[j];
+
+
+              const int l = --NumberOfBodies;
+              // if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
+	            // std::cout << "Two remaining bodies merged." << std::endl;
+              // printSummary();
+              // closeParaviewVideoFile();
+	            // std::exit(0);
+              // }
+              // Remove other merged object from list
+              for (int dim = 0; dim < 3; dim++) {
+	            x[j][dim] = x[l][dim];
+	            v[j][dim] = v[l][dim];
+              } 
+              force0[j] = force0[l];
+              force1[j] = force1[l];
+              force2[j] = force2[l];
+              mass[j] = mass[l];
+              j--;
+	          }
+	        }
+	        for (int i = 0; i < NumberOfBodies; i++) {
+            std::cout << "Time stepped" << std::endl;
+            x[i][0] = x[i][0] + timeStepSize * v[i][0];
+            x[i][1] = x[i][1] + timeStepSize * v[i][1];
+            x[i][2] = x[i][2] + timeStepSize * v[i][2];
+
+            v[i][0] = v[i][0] + timeStepSize * force0[i] / mass[i];
+            v[i][1] = v[i][1] + timeStepSize * force1[i] / mass[i];
+            v[i][2] = v[i][2] + timeStepSize * force2[i] / mass[i];
+          }
+          maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
+      }
+      }
+      timeStepSize = oldTimeStepSize;
     }
     t += timeStepSize;
 
