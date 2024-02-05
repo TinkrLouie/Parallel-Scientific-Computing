@@ -44,9 +44,9 @@ class NBodySimulationMolecularForces : public NBodySimulation {
     for (int i=0; i<NumberOfBodies; i++) {
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
-        f0 = force_calculation(i,j,0);    // force0[0] to [i]
-        f1 = force_calculation(i,j,1);
-        f2 = force_calculation(i,j,2);
+        f0 = force_calculation(j,i,0);    // force0[0] to [i]
+        f1 = force_calculation(j,i,1);
+        f2 = force_calculation(j,i,2);
 
         double distance = sqrt(
                                (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -64,7 +64,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
         force2[j] -= f2;
         std::cout << "c*(mass[i] + mass[j]: " << c*(mass[i] + mass[j]) << ", distance: " << distance << std::endl;
         if (distance <= c*(mass[i] + mass[j])){
-          
+          std::exit(0);
           // Momentum calculations
           x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
           x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
@@ -80,7 +80,8 @@ class NBodySimulationMolecularForces : public NBodySimulation {
           // Remove other merged object from list  
           const int l = --NumberOfBodies;
           if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
-	        printSummary();
+	        std::cout << "Two remaining bodies merged." << std::endl;
+          printSummary();
 	        std::exit(0);
           }
           for (int dim = 0; dim < 3; dim++) {
