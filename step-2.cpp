@@ -79,6 +79,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
 
 	        // check for collisions
 	        if (distance <= c*(mass[i] + mass[j])){
+            std::exit(0);
             // Momentum calculations
             x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
             x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
