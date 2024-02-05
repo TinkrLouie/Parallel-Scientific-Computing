@@ -62,9 +62,9 @@ class NBodySimulationMolecularForces : public NBodySimulation {
         force0[j] -= f0;
         force1[j] -= f1;
         force2[j] -= f2;
-        std::cout << "WHAT THE FUCK" << std::endl;
+        std::cout << "c: " << c << ", distance: " << distance << std::endl;
         if (distance <= c*(mass[i] + mass[j])){
-          std::cout << "c: " << c << ", distance: " << distance << std::endl;
+          
           // Momentum calculations
           x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
           x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
