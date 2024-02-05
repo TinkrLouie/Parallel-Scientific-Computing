@@ -1,8 +1,8 @@
 <VTKFile type="PolyData" >
 <PolyData>
- <Piece NumberOfPoints="2">
+ <Piece NumberOfPoints="3">
   <Points>
-   <DataArray type="Float64" NumberOfComponents="3" format="ascii">81.81 -79.9885 0 81.81 80.9885 0    </DataArray>
+   <DataArray type="Float64" NumberOfComponents="3" format="ascii">71.8294 116.681 0 -89.9895 4.22918 0 -7.53386 -14.7941 0    </DataArray>
   </Points>
  </Piece>
 </PolyData>
