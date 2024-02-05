@@ -81,6 +81,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
           if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
 	        std::cout << "Two remaining bodies merged." << std::endl;
           printSummary();
+          closeParaviewVideoFile();
 	        std::exit(0);
           }
           for (int dim = 0; dim < 3; dim++) {
