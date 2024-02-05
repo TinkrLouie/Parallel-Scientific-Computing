@@ -79,6 +79,10 @@ class NBodySimulationMolecularForces : public NBodySimulation {
 
           // Remove other merged object from list  
           const int l = --NumberOfBodies;
+          if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
+	        printSummary();
+	        std::exit(0);
+          }
           for (int dim = 0; dim < 3; dim++) {
 	        x[j][dim] = x[l][dim];
 	        v[j][dim] = v[l][dim];
@@ -86,7 +90,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
           force0[j] = force0[l];
           force1[j] = force1[l];
           force2[j] = force2[l];
-          mass[i] = mass[l];
+          mass[j] = mass[l];
           j--;
 	        }
                   
