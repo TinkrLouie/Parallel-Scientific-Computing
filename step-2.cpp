@@ -64,6 +64,9 @@ class NBodySimulationMolecularForces : public NBodySimulation {
   
       // Step 1
       dist = distance(i,j);
+
+      // Collision detection
+      std::cout << dist << (0.01/NumberOfBodies)*(mass[i] + mass[j]) << std::endl;
       if (dist <= (0.01/NumberOfBodies)*(mass[i] + mass[j])){
         collision(i,j);
         return false;
