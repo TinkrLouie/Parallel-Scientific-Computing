@@ -1,10 +1,12 @@
 #include <cmath>
-
+#include <vector>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <sstream>
 
+// #pragma omp parallel for simd reduction(max:maxV) schedule(dynamic, 1)
 class NBodySimulation {
 
  protected:
@@ -20,7 +22,7 @@ class NBodySimulation {
    * each pointer represents one molecule/particle/body.
    */
   double** x;
-
+  double** prev_x;
   /**
    * Equivalent to x storing the velocities.
    */
@@ -61,7 +63,8 @@ class NBodySimulation {
  public:
   NBodySimulation ();
   ~NBodySimulation ();
-
+  
+  double getTDelta ();
   /**
    * Check that the number command line parameters is correct.
    */
