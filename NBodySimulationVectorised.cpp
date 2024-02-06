@@ -40,8 +40,9 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
 
-    #pragma omp simd collapse(2) reduction(min: minDx)
+    #pragma omp simd
     for (int i=0; i<NumberOfBodies; i++) {
+      #pragma omp simd reduction(min: minDx)
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
         f0 = force_calculation(j,i,0);    // Calculate force between i and j
@@ -61,14 +62,19 @@ class NBodySimulationVectorised : public NBodySimulation {
 
 
     // Update velocity and position  
-    #pragma omp simd collapse(2) reduction(max: maxV)
+    #pragma omp simd collapse(2)
     for (int i = 0; i < NumberOfBodies; i++) {
       for (int dim = 0; dim < 3; dim++) {
         x[i][dim] = x[i][dim] + timeStepSize * v[i][dim];
         v[i][dim] = v[i][dim] + timeStepSize * force0[i] / mass[i];
-      }  
+      }
+    }
+
+    #pragma omp simd reduction(max: maxV)
+    for (int i = 0; i < NumberOfBodies; i++) {
       maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
     }
+    
     t += timeStepSize;
 
     delete[] force0;
