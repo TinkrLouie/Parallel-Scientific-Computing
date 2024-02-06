@@ -6,7 +6,7 @@
 class NBodySimulationVectorised : public NBodySimulation {
   public:
     // Runge-Kutta 4th Order. Function as bool because if merge, wont perform rk4 on j 
-    //#pragma omp declare simd
+    #pragma omp declare simd
     bool rk4 (int i, int j) {
       double xTemp[4][3];
       double vTemp[4][3];
