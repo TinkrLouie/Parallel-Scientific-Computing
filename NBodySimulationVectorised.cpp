@@ -90,7 +90,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
 
-    #pragma omp simd reduction(max: maxV) reduction(min: minDx)
+    #pragma omp simd //reduction(max: maxV) reduction(min: minDx) reduction worsens perf!
     for (int i=0; i<NumberOfBodies; i++) {
       for (int j = i+1; j < NumberOfBodies; j++) {
         // Calculate position and velocity by performing RK4 on i and j, if no collision, do the reverse
