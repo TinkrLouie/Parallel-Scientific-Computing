@@ -1,5 +1,5 @@
 #include <iomanip>
-
+#include <chrono>
 #include "NBodySimulation.h"
 
 /**
@@ -23,6 +23,7 @@
  * or remove input checking, if you feel the need to do so. But keep in mind
  * that you may not alter what the program writes to the standard output.
  */
+
 int main (int argc, char** argv) {
 
   std::cout << std::setprecision(15);
@@ -33,13 +34,20 @@ int main (int argc, char** argv) {
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
 
+  auto t1 = std::chrono::high_resolution_clock::now();
   while (!nbs.hasReachedEnd()) {
     nbs.updateBody();
     nbs.takeSnapshot();
   }
+  auto t2 = std::chrono::high_resolution_clock::now();
 
   nbs.printSummary();
   nbs.closeParaviewVideoFile();
-
+  
+ 
+  // Calculating total time taken by the program. 
+  std::cout << "Time taken by program is : " << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count() << " millisec " << std::endl;
   return 0;
 }
+
+

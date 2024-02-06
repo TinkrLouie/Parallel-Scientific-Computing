@@ -143,26 +143,31 @@ void NBodySimulation::updateBody () {
   }
   
   for (int i=0; i<NumberOfBodies; i++) {
-    for (int j = 0; j < NumberOfBodies; j++) {
-      if (i == j) continue;
-      force0[i] += force_calculation(j,i,0);    // force0[0] to [i]
-      force1[i] += force_calculation(j,i,1);
-      force2[i] += force_calculation(j,i,2);
+    for (int j = i+1; j < NumberOfBodies; j++) {
+      double f0, f1, f2;
+      f0 = force_calculation(j,i,0);    // Calculate force between i and j
+      f1 = force_calculation(j,i,1);
+      f2 = force_calculation(j,i,2);
+      
+      // Force acting i by j
+      force0[i] += f0;
+      force1[i] += f1;
+      force2[i] += f2;
+      // Force acting on j by i, opposite magnitude hence negative sign
+      force0[j] -= f0;
+      force1[j] -= f1;
+      force2[j] -= f2;
     }
   }
 
-    // x,y,z forces acting on particle 0 => to all particles
-    
-  for (int i = 0; i < NumberOfBodies; i++) {
-  x[i][0] = x[i][0] + timeStepSize * v[i][0];
-  x[i][1] = x[i][1] + timeStepSize * v[i][1];
-  x[i][2] = x[i][2] + timeStepSize * v[i][2];
-
-  v[i][0] = v[i][0] + timeStepSize * force0[i] / mass[i];
-  v[i][1] = v[i][1] + timeStepSize * force1[i] / mass[i];
-  v[i][2] = v[i][2] + timeStepSize * force2[i] / mass[i];
   
-  maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
+  // Update velocity and position  
+  for (int i = 0; i < NumberOfBodies; i++) {
+    for (int dim = 0; dim < 3; dim++) {
+      x[i][dim] = x[i][dim] + timeStepSize * v[i][dim];
+      v[i][dim] = v[i][dim] + timeStepSize * force0[i] / mass[i];
+    }  
+    maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
   }
   t += timeStepSize;
 
