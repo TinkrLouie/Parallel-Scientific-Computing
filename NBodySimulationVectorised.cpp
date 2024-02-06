@@ -5,19 +5,19 @@
 
 class NBodySimulationVectorised : public NBodySimulation {
   public:
-  //#pragma omp declare simd
-  //double force_calculation (int i, int j, int direction){
-  //  // Euclidean distance
-  //  const double distance = sqrt(
-  //                               (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
-  //                               (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
-  //                               (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
-  //                               );
-  //  const double distance3 = distance * distance * distance;
-  //  minDx = std::min( minDx,distance );
+  #pragma omp declare simd
+  double force_calculation (int i, int j, int direction){
+    // Euclidean distance
+    const double distance = sqrt(
+                                 (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
+                                 (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
+                                 (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
+                                 );
+    const double distance3 = distance * distance * distance;
+    minDx = std::min( minDx,distance );
 
-  //  return (x[i][direction]-x[j][direction]) * mass[i]*mass[j] / distance3;
-  //}
+    return (x[i][direction]-x[j][direction]) * mass[i]*mass[j] / distance3;
+  }
 
   void updateBody () {
     timeStepCounter++;
@@ -40,7 +40,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
 
-    //#pragma omp parallel for
+    #pragma omp parallel for simd
     for (int i=0; i<NumberOfBodies; i++) {
       //pragma omp simd 
       for (int j = i+1; j < NumberOfBodies; j++) {
@@ -61,7 +61,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
     // Update velocity and position  
-    #pragma omp parallel for
+    #pragma omp parallel for simd reduction(max:maxV)
     for (int i = 0; i < NumberOfBodies; i++) {
       //#pragma omp simd
       for (int dim = 0; dim < 3; dim++) {
