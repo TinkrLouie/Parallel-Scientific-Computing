@@ -40,7 +40,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
 
-    //#pragma omp simd 
+    #pragma omp parallel for 
     for (int i=0; i<NumberOfBodies; i++) {
       #pragma omp simd 
       for (int j = i+1; j < NumberOfBodies; j++) {
@@ -61,7 +61,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
     // Update velocity and position  
-    #pragma omp simd reduction(max:maxV)
+    #pragma omp parallel for simd reduction(max:maxV)
     for (int i = 0; i < NumberOfBodies; i++) {
       
       x[i][0] += timeStepSize *v[i][0];
