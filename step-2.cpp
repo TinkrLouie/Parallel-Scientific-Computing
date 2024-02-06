@@ -28,7 +28,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       double d[3];
       double dist, nr = 1.0/6;
       double c = 1e-2;
-      double tolerance = 0.06;      // tweak tolerance here
+      double tolerance = 0.05;      // tweak tolerance here
       
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -37,14 +37,12 @@ class NBodySimulationMolecularForces : public NBodySimulation {
                  );
       // Collision detection
       if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
-        x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
-        x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
-        x[i][2] = (mass[i]*x[i][2] + mass[j]*x[j][2]) / (mass[i]+mass[j]);
-          
-        v[i][0] = (mass[i]*v[i][0] + mass[j]*v[j][0]) / (mass[i]+mass[j]);
-        v[i][1] = (mass[i]*v[i][1] + mass[j]*v[j][1]) / (mass[i]+mass[j]);
-        v[i][2] = (mass[i]*v[i][2] + mass[j]*v[j][2]) / (mass[i]+mass[j]);
-        
+        // Momentum update
+        for (int dim = 0; dim < 3; dim++) {
+          x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
+          v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
+        }
+//
         // Mass of merged object
         mass[i] += mass[j];
 //
@@ -58,6 +56,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
         }
         mass[j] = mass[l];
         j--;
+        return;
       }
 
       for (int dim = 0; dim < 3; dim++) aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);;
