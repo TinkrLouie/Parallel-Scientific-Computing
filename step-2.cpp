@@ -61,7 +61,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       double* a4 = new double[3];
       double* d = new double[3];
       double dist, nr = 1.0/6;
-      double tolerance = 0.07;
+      double tolerance = 0.06;
       // Step 1
       dist = distance(i,j);
 
