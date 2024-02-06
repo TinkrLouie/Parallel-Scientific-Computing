@@ -40,9 +40,9 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
 
-    #pragma omp parallel for 
+    #pragma omp parallel for simd reduction(+:force0[:NumberOfBodies], force1[:NumberOfBodies], force2[:NumberOfBodies]) reduction(min:minDx)
     for (int i=0; i<NumberOfBodies; i++) {
-      #pragma omp simd reduction(+:force0[:NumberOfBodies], force1[:NumberOfBodies], force2[:NumberOfBodies]) reduction(min:minDx)
+      //pragma omp simd 
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
         f0 = force_calculation(j,i,0);    // Calculate force between i and j
@@ -61,9 +61,9 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
     // Update velocity and position  
-    #pragma omp parallel for reduction(max:maxV)
+    #pragma omp parallel for simd reduction(max:maxV)
     for (int i = 0; i < NumberOfBodies; i++) {
-      #pragma omp simd
+      //#pragma omp simd
       for (int dim = 0; dim < 3; dim++) {
         x[i][dim] = x[i][dim] + timeStepSize * v[i][dim];
         v[i][dim] = v[i][dim] + timeStepSize * force0[i] / mass[i];
