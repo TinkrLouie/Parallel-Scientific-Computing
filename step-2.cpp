@@ -66,7 +66,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       dist = distance(i,j);
 
       // Collision detection
-      std::cout << dist << (0.01/NumberOfBodies)*(mass[i] + mass[j]) << std::endl;
+      
       if (dist <= (0.01/NumberOfBodies)*(mass[i] + mass[j])){
         collision(i,j);
         return false;
@@ -152,7 +152,9 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       }
     }
     t += timeStepSize;
+    std::cout << minDx << std::endl;
   }
+  
 };
 
 
