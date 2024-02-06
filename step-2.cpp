@@ -20,124 +20,146 @@
 class NBodySimulationMolecularForces : public NBodySimulation {
   
   public:
+  double rk4 (int i, int j) {
+    double* x2 = new double[3];  // second order x,y,z
+    double* x3 = new double[3];  // third order x,y,z
+    double* x4 = new double[3];  // fourth order x,y,z
+    double* v2 = new double[3];
+    double* v3 = new double[3];
+    double* v4 = new double[3];
+    double* a1 = new double[3];
+    double* a2 = new double[3];
+    double* a3 = new double[3];
+    double* a4 = new double[3];
+    double* d = new double[3];
+    double dist, nr = 1.0/6;
+
+    // Step 1
+    dist = distance(i,j);
+    for (int dim = 0; dim < 3; dim++) a1[dim] = acceleration(j,i,dist,dim);
+
+    // Step 2
+    for (int dim = 0; dim < 3; dim++) v2[dim] = v[i][dim] + a1[dim]*timeStepSize*0.5;  // compute 2nd order v
+    for (int dim = 0; dim < 3; dim++) x2[dim] = x[i][dim] + v[i][dim]*timeStepSize*0.5; // compute 2nd order x
+    for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x2[dim];  // compute dx,dy,dz of 2nd order x
+    dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 2nd order x to j
+    for (int dim = 0; dim < 3; dim++) a2[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 2nd order acceleration of i
+
+    // Step 3
+    for (int dim = 0; dim < 3; dim++) v3[dim] = v[i][dim] + a2[dim]*timeStepSize*0.5;  // compute 3rd order v
+    for (int dim = 0; dim < 3; dim++) x3[dim] = x[i][dim] + v2[dim]*timeStepSize*0.5; // compute 3rd order x
+    for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x3[dim];  // compute dx,dy,dz of 3rd order x
+    dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 3rd order x to j
+    for (int dim = 0; dim < 3; dim++) a3[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 3rd order acceleration of i
+
+    // Step 4
+    for (int dim = 0; dim < 3; dim++) v4[dim] = v[i][dim] + a3[dim]*timeStepSize*0.5;  // compute 4th order v
+    for (int dim = 0; dim < 3; dim++) x4[dim] = x[i][dim] + v3[dim]*timeStepSize*0.5; // compute 4th order x
+    for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x4[dim];  // compute dx,dy,dz of 4th order x
+    dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 4th order x to j
+    for (int dim = 0; dim < 3; dim++) a4[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 4th order acceleration of i
+
+
+    for (int dim = 0; dim < 3; dim++) x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*v2[dim] + 2*v3[dim] + v4[dim]) * timeStepSize;
+    for (int dim = 0; dim < 3; dim++) v[i][dim] = v[i][dim] + nr*(a1[dim] + 2*a2[dim] + 2*a3[dim] + a4[dim]) * timeStepSize;
+
+    delete[] x2;
+    delete[] x3;
+    delete[] x4;
+    delete[] v2;
+    delete[] v3;
+    delete[] v4;
+    delete[] a1;
+    delete[] a2;
+    delete[] a3;
+    delete[] a4;
+    delete[] d ;
+  }
+
+  double distance (int i, int j) {  // Euclidean distance between bodies i and j
+    const double distance = sqrt(
+      (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
+      (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
+      (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
+      );
+    return distance;
+  }
+
+  double acceleration (int i, int j, double distance, int direction){ // acceleration of body i through body j
+    const double distance3 = distance * distance * distance;
+    minDx = std::min( minDx,distance );  // can be taken out
+
+    return (x[i][direction]-x[j][direction]) * mass[i] / distance3;
+  }
+
   void updateBody () {
-    int numBuckets = 10;
-    double vBucket = maxV / numBuckets;
     timeStepCounter++;
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
     double c = 0.01/NumberOfBodies;
-    // force0 = force along x direction
-    // force1 = force along y direction
-    // force2 = force along z direction
-    double* force0 = new double[NumberOfBodies];
-    double* force1 = new double[NumberOfBodies];
-    double* force2 = new double[NumberOfBodies];
+    double* x2 = new double[3];  // second order x,y,z
+    double* x3 = new double[3];  // third order x,y,z
+    double* x4 = new double[3];  // fourth order x,y,z
+    double* v2 = new double[3];
+    double* v3 = new double[3];
+    double* v4 = new double[3];
+    double* a1 = new double[3];
+    double* a2 = new double[3];
+    double* a3 = new double[3];
+    double* a4 = new double[3];
+    double* d = new double[3];
 
-    int* particleInBucket = new int[NumberOfBodies]();
-    for (int b = 1; b < numBuckets+1; b++) {
-      for (int p = 0; p < NumberOfBodies; p++) {
-        if (particleInBucket[p]) continue;
-        else if (v[p][0]*v[p][0] + v[p][1]*v[p][1] + v[p][2]*v[p][2] <
-	         (b+1)*vBucket*vBucket) particleInBucket[p] = b;
+    for (int i=0; i<NumberOfBodies; i++) {
+      for (int j = 0; j < NumberOfBodies; j++) {
+        if (i == j) continue;
+        
+        double dist, nr = 1.0/6;
+
+        // Step 1
+        dist = distance(i,j);
+        for (int dim = 0; dim < 3; dim++) a1[dim] = acceleration(j,i,dist,dim);
+
+        // Step 2
+        for (int dim = 0; dim < 3; dim++) v2[dim] = v[i][dim] + a1[dim]*timeStepSize*0.5;  // compute 2nd order v
+        for (int dim = 0; dim < 3; dim++) x2[dim] = x[i][dim] + v[i][dim]*timeStepSize*0.5; // compute 2nd order x
+        for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x2[dim];  // compute dx,dy,dz of 2nd order x
+        dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 2nd order x to j
+        for (int dim = 0; dim < 3; dim++) a2[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 2nd order acceleration of i
+
+        // Step 3
+        for (int dim = 0; dim < 3; dim++) v3[dim] = v[i][dim] + a2[dim]*timeStepSize*0.5;  // compute 3rd order v
+        for (int dim = 0; dim < 3; dim++) x3[dim] = x[i][dim] + v2[dim]*timeStepSize*0.5; // compute 3rd order x
+        for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x3[dim];  // compute dx,dy,dz of 3rd order x
+        dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 3rd order x to j
+        for (int dim = 0; dim < 3; dim++) a3[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 3rd order acceleration of i
+
+        // Step 4
+        for (int dim = 0; dim < 3; dim++) v4[dim] = v[i][dim] + a3[dim]*timeStepSize*0.5;  // compute 4th order v
+        for (int dim = 0; dim < 3; dim++) x4[dim] = x[i][dim] + v3[dim]*timeStepSize*0.5; // compute 4th order x
+        for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x4[dim];  // compute dx,dy,dz of 4th order x
+        dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 4th order x to j
+        for (int dim = 0; dim < 3; dim++) a4[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 4th order acceleration of i
+
+
+        for (int dim = 0; dim < 3; dim++) x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*v2[dim] + 2*v3[dim] + v4[dim]) * timeStepSize;
+        for (int dim = 0; dim < 3; dim++) v[i][dim] = v[i][dim] + nr*(a1[dim] + 2*a2[dim] + 2*a3[dim] + a4[dim]) * timeStepSize;
+
+        
+        maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
       }
-    }
-    // Initialise forces to 0 
-    //for (int i = 0; i < NumberOfBodies; i++) {
-    //      force0[i] = 0.0;
-    //      force1[i] = 0.0;
-    //      force2[i] = 0.0;
-    //}
-    for (int p = 0; p < NumberOfBodies; p++) if (!particleInBucket[p]) particleInBucket[p] = 1;
-    for (int bucket = 1; bucket < numBuckets+1; bucket++) {
-      std::cout << "Bucket: " << bucket << std::endl;
-      int i = 0;
-      double oldTimeStepSize = timeStepSize;
-      timeStepSize /= std::pow(2, bucket - 1);
-      // find all the particles belonging to the bucket
-      for (int particle = i; particle < NumberOfBodies; particle++) {
-        std::cout << "Particle: " << particle << std::endl;
-        if (particleInBucket[particle] != bucket) {
-	        continue;
-        }
-        std::cout << "Particle: skip" << particle << std::endl;
-        i = particle;
-        // split dt into particleInBucket[j] portions, then perform them
-        for (int iter = 0; iter < std::pow(2, bucket-1); iter++) {
-          std::cout << "Iters: " << iter << std::endl;
-	        // zero force every partial timestep
-	        force0[i] = 0.0;
-          force1[i] = 0.0;
-          force2[i] = 0.0;
-	        for (int j = 0; j < NumberOfBodies; j++) {
-            std::cout << "Inner j" << std::endl;
-	          if (i == j) continue;
-            force0[i] += force_calculation(j,i,0);    // force0[0] to [i]
-            force1[i] += force_calculation(j,i,1);
-            force2[i] += force_calculation(j,i,2);
-
-            double distance = sqrt(
-                                   (x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
-                                   (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
-                                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
-                                   );
-            std::cout << "c*(mass[i] + mass[j]: " << c*(mass[i] + mass[j]) << ", distance: " << distance << std::endl;
-	          // check for collisions
-	          if (distance <= c*(mass[i] + mass[j])){
-              std::cout << "Merged" << std::endl;
-              // Momentum calculations
-              x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
-              x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
-              x[i][2] = (mass[i]*x[i][2] + mass[j]*x[j][2]) / (mass[i]+mass[j]);
-
-              v[i][0] = (mass[i]*v[i][0] + mass[j]*v[j][0]) / (mass[i]+mass[j]);
-              v[i][1] = (mass[i]*v[i][1] + mass[j]*v[j][1]) / (mass[i]+mass[j]);
-              v[i][2] = (mass[i]*v[i][2] + mass[j]*v[j][2]) / (mass[i]+mass[j]);
-
-              // Mass of merged object
-              mass[i] += mass[j];
-
-
-              const int l = --NumberOfBodies;
-              // if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
-	            // std::cout << "Two remaining bodies merged." << std::endl;
-              // printSummary();
-              // closeParaviewVideoFile();
-	            // std::exit(0);
-              // }
-              // Remove other merged object from list
-              for (int dim = 0; dim < 3; dim++) {
-	            x[j][dim] = x[l][dim];
-	            v[j][dim] = v[l][dim];
-              } 
-              force0[j] = force0[l];
-              force1[j] = force1[l];
-              force2[j] = force2[l];
-              mass[j] = mass[l];
-              j--;
-	          }
-	        }
-	        for (int i = 0; i < NumberOfBodies; i++) {
-            std::cout << "Time stepped" << std::endl;
-            x[i][0] = x[i][0] + timeStepSize * v[i][0];
-            x[i][1] = x[i][1] + timeStepSize * v[i][1];
-            x[i][2] = x[i][2] + timeStepSize * v[i][2];
-
-            v[i][0] = v[i][0] + timeStepSize * force0[i] / mass[i];
-            v[i][1] = v[i][1] + timeStepSize * force1[i] / mass[i];
-            v[i][2] = v[i][2] + timeStepSize * force2[i] / mass[i];
-          }
-          maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
-      }
-      }
-      timeStepSize = oldTimeStepSize;
     }
     t += timeStepSize;
-
-    delete[] force0;
-    delete[] force1;
-    delete[] force2;
-    delete[] particleInBucket;
+    delete[] x2;
+    delete[] x3;
+    delete[] x4;
+    delete[] v2;
+    delete[] v3;
+    delete[] v4;
+    delete[] a1;
+    delete[] a2;
+    delete[] a3;
+    delete[] a4;
+    delete[] d ;
   }
 };
 
