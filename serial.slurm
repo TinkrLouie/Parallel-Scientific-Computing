@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="step-1"
-#SBATCH -o results/step1.%A.out
-#SBATCH -e results/step1.%A.err
+#SBATCH -o step2_slurm.out
+#SBATCH -e step2_slurm.err
 #SBATCH -p shared
 #SBATCH -t 00:01:00
 #SBATCH --nodes=1
