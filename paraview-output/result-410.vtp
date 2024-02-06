@@ -2,7 +2,7 @@
 <PolyData>
  <Piece NumberOfPoints="2">
   <Points>
-   <DataArray type="Float64" NumberOfComponents="3" format="ascii">-5.7641 0.235898 0.235898 5.7641 -0.235898 -0.235898    </DataArray>
+   <DataArray type="Float64" NumberOfComponents="3" format="ascii">3.14062 4.14062 4.14062 -3.14062 -4.14062 -4.14062    </DataArray>
   </Points>
  </Piece>
 </PolyData>
