@@ -182,9 +182,7 @@ int main (int argc, char** argv) {
 
   nbs.printSummary();
   nbs.closeParaviewVideoFile();
-
-  // Calculating total time taken by the program. 
-  double time_taken = double(end - start); 
-  std::cout << "Time taken by program is : " << time_taken << " sec " << std::endl; 
+  std::cout.precision(15);
+  std::cout << "Time taken by program is : " << end - start << " sec " << std::endl; 
   return 0;
 }
