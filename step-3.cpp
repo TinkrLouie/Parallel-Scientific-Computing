@@ -1,5 +1,5 @@
 #include <iomanip>
-
+#include <time.h>
 #include "NBodySimulationVectorised.cpp"
 
 /**
@@ -24,7 +24,7 @@
  * that you may not alter what the program writes to the standard output.
  */
 int main (int argc, char** argv) {
-
+  time_t start, end;
   std::cout << std::setprecision(15);
 
   // Code that initialises and runs the simulation.
@@ -33,13 +33,21 @@ int main (int argc, char** argv) {
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
 
+  time(&start); 
   while (!nbs.hasReachedEnd()) {
     nbs.updateBody();
     nbs.takeSnapshot();
   }
-
+  time(&end); 
+  
   nbs.printSummary();
   nbs.closeParaviewVideoFile();
-
+  
+ 
+  // Calculating total time taken by the program. 
+  double time_taken = double(end - start); 
+  std::cout << "Time taken by program is : " << std::fixed 
+      << time_taken << std::setprecision(5); 
+  std::cout << " sec " << std::endl; 
   return 0;
 }
