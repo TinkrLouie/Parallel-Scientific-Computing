@@ -37,12 +37,14 @@ class NBodySimulationMolecularForces : public NBodySimulation {
                  );
       // Collision detection
       if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
-        // Momentum update
-        for (int dim = 0; dim < 3; dim++) {
-          x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
-          v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
-        }
-//
+        x[i][0] = (mass[i]*x[i][0] + mass[j]*x[j][0]) / (mass[i]+mass[j]);
+        x[i][1] = (mass[i]*x[i][1] + mass[j]*x[j][1]) / (mass[i]+mass[j]);
+        x[i][2] = (mass[i]*x[i][2] + mass[j]*x[j][2]) / (mass[i]+mass[j]);
+          
+        v[i][0] = (mass[i]*v[i][0] + mass[j]*v[j][0]) / (mass[i]+mass[j]);
+        v[i][1] = (mass[i]*v[i][1] + mass[j]*v[j][1]) / (mass[i]+mass[j]);
+        v[i][2] = (mass[i]*v[i][2] + mass[j]*v[j][2]) / (mass[i]+mass[j]);
+        
         // Mass of merged object
         mass[i] += mass[j];
 //
