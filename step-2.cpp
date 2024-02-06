@@ -185,6 +185,6 @@ int main (int argc, char** argv) {
 
   // Calculating total time taken by the program. 
   double time_taken = double(end - start); 
-  std::cout << "Time taken by program is : " << start << end << time_taken << " sec " << std::endl; 
+  std::cout << "Time taken by program is : " << time_taken << " sec " << std::endl; 
   return 0;
 }
