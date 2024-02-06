@@ -16,7 +16,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     const double distance3 = distance * distance * distance;
     minDx = std::min( minDx,distance );
 
-    return (x[i][direction]-x[j][direction]) * mass[i]*mass[j] / distance3;
+    return (x[j][direction]-x[i][direction]) * mass[i]*mass[j] / distance3;
   }
 
   void updateBody () {
@@ -42,32 +42,36 @@ class NBodySimulationVectorised : public NBodySimulation {
 
     //#pragma omp simd 
     for (int i=0; i<NumberOfBodies; i++) {
-      #pragma omp simd 
+      //#pragma omp simd 
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
-        f0 = force_calculation(j,i,0);    // Calculate force between i and j
-        f1 = force_calculation(j,i,1);
-        f2 = force_calculation(j,i,2);
+        f0 = force_calculation(i,j,0);    // Calculate force between i and j
+        f1 = force_calculation(i,j,1);
+        f2 = force_calculation(i,j,2);
 
         // Force acting i by j
         force0[i] += f0;
         force1[i] += f1;
         force2[i] += f2;
         // Force acting on j by i, opposite magnitude hence negative sign
-        force0[j] += -f0;
-        force1[j] += -f1;
-        force2[j] += -f2;
+        force0[j] -= f0;
+        force1[j] -= f1;
+        force2[j] -= f2;
       }
     }
 
     // Update velocity and position  
-    //#pragma omp simd reduction(max:maxV)
+    #pragma omp simd reduction(max:maxV)
     for (int i = 0; i < NumberOfBodies; i++) {
-      //#pragma omp simd
-      for (int dim = 0; dim < 3; dim++) {
-        x[i][dim] = x[i][dim] + timeStepSize * v[i][dim];
-        v[i][dim] = v[i][dim] + timeStepSize * force0[i] / mass[i];
-      }
+      
+      x[i][0] += timeStepSize *v[i][0];
+      x[i][1] += timeStepSize *v[i][1];
+      x[i][2] += timeStepSize *v[i][2];
+  
+      v[i][0] += timeStepSize * force0[i] / mass[i];
+      v[i][1] += timeStepSize * force1[i] / mass[i];
+      v[i][2] += timeStepSize * force2[i] / mass[i];
+      
       maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
     }
 
