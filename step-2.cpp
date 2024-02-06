@@ -100,8 +100,8 @@ class NBodySimulationMolecularForces : public NBodySimulation {
     timeStepCounter++;
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
-    // Possible vectorisation and parallism on outer loop
     for (int i=0; i<NumberOfBodies; i++) {
+          // Possible vectorisation and parallism on inner loop
       for (int j = 0; j < NumberOfBodies; j++) {
         // Calculate position and velocity by performing RK4 on i and j
         if (i==j) continue;
