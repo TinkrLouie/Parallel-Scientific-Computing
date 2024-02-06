@@ -63,31 +63,37 @@ class NBodySimulationMolecularForces : public NBodySimulation {
         for (int dim = 0; dim < 3; dim++) a1[dim] = acceleration(j,i,dist,dim);
 
         // Step 2
-        for (int dim = 0; dim < 3; dim++) v2[dim] = v[i][dim] + a1[dim]*timeStepSize*0.5;  // compute 2nd order v
-        for (int dim = 0; dim < 3; dim++) x2[dim] = x[i][dim] + v[i][dim]*timeStepSize*0.5; // compute 2nd order x
-        for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x2[dim];  // compute dx,dy,dz of 2nd order x
+        for (int dim = 0; dim < 3; dim++) {
+          v2[dim] = v[i][dim] + a1[dim]*timeStepSize*0.5;  // compute 2nd order v
+          x2[dim] = x[i][dim] + v[i][dim]*timeStepSize*0.5; // compute 2nd order x
+          d[dim] = x[j][dim] - x2[dim];  // compute dx,dy,dz of 2nd order x
+        }
         dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 2nd order x to j
         for (int dim = 0; dim < 3; dim++) a2[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 2nd order acceleration of i
 
         // Step 3
-        for (int dim = 0; dim < 3; dim++) v3[dim] = v[i][dim] + a2[dim]*timeStepSize*0.5;  // compute 3rd order v
-        for (int dim = 0; dim < 3; dim++) x3[dim] = x[i][dim] + v2[dim]*timeStepSize*0.5; // compute 3rd order x
-        for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x3[dim];  // compute dx,dy,dz of 3rd order x
+        for (int dim = 0; dim < 3; dim++) {
+          v3[dim] = v[i][dim] + a2[dim]*timeStepSize*0.5;  // compute 3rd order v
+          x3[dim] = x[i][dim] + v2[dim]*timeStepSize*0.5; // compute 3rd order x
+          d[dim] = x[j][dim] - x3[dim];  // compute dx,dy,dz of 3rd order x
+        }
         dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 3rd order x to j
         for (int dim = 0; dim < 3; dim++) a3[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 3rd order acceleration of i
 
         // Step 4
-        for (int dim = 0; dim < 3; dim++) v4[dim] = v[i][dim] + a3[dim]*timeStepSize*0.5;  // compute 4th order v
-        for (int dim = 0; dim < 3; dim++) x4[dim] = x[i][dim] + v3[dim]*timeStepSize*0.5; // compute 4th order x
-        for (int dim = 0; dim < 3; dim++) d[dim] = x[j][dim] - x4[dim];  // compute dx,dy,dz of 4th order x
+        for (int dim = 0; dim < 3; dim++) {
+          v4[dim] = v[i][dim] + a3[dim]*timeStepSize*0.5;  // compute 4th order v
+          x4[dim] = x[i][dim] + v3[dim]*timeStepSize*0.5; // compute 4th order x
+          d[dim] = x[j][dim] - x4[dim];  // compute dx,dy,dz of 4th order x
+        }
         dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 4th order x to j
         for (int dim = 0; dim < 3; dim++) a4[dim] = d[dim]*mass[j]/(dist*dist*dist);  // 4th order acceleration of i
 
 
-        for (int dim = 0; dim < 3; dim++) x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*v2[dim] + 2*v3[dim] + v4[dim]) * timeStepSize;
-        for (int dim = 0; dim < 3; dim++) v[i][dim] = v[i][dim] + nr*(a1[dim] + 2*a2[dim] + 2*a3[dim] + a4[dim]) * timeStepSize;
-
-        
+        for (int dim = 0; dim < 3; dim++) {
+          x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*v2[dim] + 2*v3[dim] + v4[dim]) * timeStepSize;
+          v[i][dim] = v[i][dim] + nr*(a1[dim] + 2*a2[dim] + 2*a3[dim] + a4[dim]) * timeStepSize;
+        }
         maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
       }
     }
