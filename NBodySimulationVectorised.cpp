@@ -40,8 +40,9 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
 
-    #pragma omp simd reduction(min: minDx)
+    #pragma omp parallel for 
     for (int i=0; i<NumberOfBodies; i++) {
+      #pragma omp simd reduction(+:force0[:NumberOfBodies], force1[:NumberOfBodies], force2[:NumberOfBodies]) reduction(min:minDx)
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
         f0 = force_calculation(j,i,0);    // Calculate force between i and j
@@ -53,26 +54,24 @@ class NBodySimulationVectorised : public NBodySimulation {
         force1[i] += f1;
         force2[i] += f2;
         // Force acting on j by i, opposite magnitude hence negative sign
-        force0[j] -= f0;
-        force1[j] -= f1;
-        force2[j] -= f2;
+        force0[j] += -f0;
+        force1[j] += -f1;
+        force2[j] += -f2;
       }
     }
 
-
     // Update velocity and position  
-    #pragma omp simd collapse(2)
+    #pragma omp parallel for reduction(max:maxV)
     for (int i = 0; i < NumberOfBodies; i++) {
+      #pragma omp simd
       for (int dim = 0; dim < 3; dim++) {
         x[i][dim] = x[i][dim] + timeStepSize * v[i][dim];
         v[i][dim] = v[i][dim] + timeStepSize * force0[i] / mass[i];
       }
-    }
-
-    #pragma omp simd reduction(max: maxV)
-    for (int i = 0; i < NumberOfBodies; i++) {
       maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
     }
+
+
     
     t += timeStepSize;
 
