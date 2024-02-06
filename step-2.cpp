@@ -20,14 +20,14 @@
 class NBodySimulationMolecularForces : public NBodySimulation {
   
   public:
-    // Runge-Kutta 4th Order. Function as bool because if merge, wont perform rk4 on j 
-    bool rk4 (int i, int j) {
+    // Runge-Kutta 4th Order
+    void rk4 (int i, int j) {
       double xTemp[4][3];
       double vTemp[4][3];
       double aTemp[4][3];
       double d[3];
       double dist, nr = 1.0/6;
-      double c = 3e-2;      // tweak tolerance here
+      double c = 1e-2;      // tweak tolerance here
       
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -35,28 +35,27 @@ class NBodySimulationMolecularForces : public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
       // Collision detection
-      //if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
-      //  // Momentum update
-      //  for (int dim = 0; dim < 3; dim++) {
-      //    x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
-      //    v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
-      //  }
+      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
+        // Momentum update
+        for (int dim = 0; dim < 3; dim++) {
+          x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
+          v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
+        }
 //
-      //  // Mass of merged object
-      //  mass[i] += mass[j];
+        // Mass of merged object
+        mass[i] += mass[j];
 //
-      //  // Decrement n bodies
-      //  const int l = --NumberOfBodies;
+        // Decrement n bodies
+        const int l = --NumberOfBodies;
 //
-      //  // Remove other merged object from list
-      //  for (int dim = 0; dim < 3; dim++) {
-	    //  x[j][dim] = x[l][dim];
-	    //  v[j][dim] = v[l][dim];
-      //  }
-      //  mass[j] = mass[l];
-      //  j--;
-      //  return false;
-      //}
+        // Remove other merged object from list
+        for (int dim = 0; dim < 3; dim++) {
+	      x[j][dim] = x[l][dim];
+	      v[j][dim] = v[l][dim];
+        }
+        mass[j] = mass[l];
+        j--;
+      }
 
       for (int dim = 0; dim < 3; dim++) aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);;
       minDx = std::min(minDx,dist);
@@ -94,18 +93,18 @@ class NBodySimulationMolecularForces : public NBodySimulation {
         x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*vTemp[1][dim] + 2*vTemp[2][dim] + vTemp[3][dim]) * timeStepSize;
         v[i][dim] = v[i][dim] + nr*(aTemp[0][dim] + 2*aTemp[1][dim] + 2*aTemp[2][dim] + aTemp[3][dim]) * timeStepSize;
       }
-      
-      return true;
   }
 
   void updateBody () {
     timeStepCounter++;
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
+    // Possible vectorisation and parallism on outer loop
     for (int i=0; i<NumberOfBodies; i++) {
-      for (int j = i+1; j < NumberOfBodies; j++) {
-        // Calculate position and velocity by performing RK4 on i and j, if no collision, do the reverse
-        if (rk4(i,j)) rk4(j,i);
+      for (int j = 0; j < NumberOfBodies; j++) {
+        // Calculate position and velocity by performing RK4 on i and j
+        if (i==j) continue;
+        rk4(i,j);
         maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
       }
     }
