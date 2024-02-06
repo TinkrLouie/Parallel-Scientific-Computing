@@ -35,28 +35,28 @@ class NBodySimulationMolecularForces : public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
       // Collision detection
-      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
-        // Momentum update
-        for (int dim = 0; dim < 3; dim++) {
-          x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
-          v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
-        }
-
-        // Mass of merged object
-        mass[i] += mass[j];
-
-        // Decrement n bodies
-        const int l = --NumberOfBodies;
-
-        // Remove other merged object from list
-        for (int dim = 0; dim < 3; dim++) {
-	      x[j][dim] = x[l][dim];
-	      v[j][dim] = v[l][dim];
-        }
-        mass[j] = mass[l];
-        j--;
-        return false;
-      }
+      //if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
+      //  // Momentum update
+      //  for (int dim = 0; dim < 3; dim++) {
+      //    x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
+      //    v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
+      //  }
+//
+      //  // Mass of merged object
+      //  mass[i] += mass[j];
+//
+      //  // Decrement n bodies
+      //  const int l = --NumberOfBodies;
+//
+      //  // Remove other merged object from list
+      //  for (int dim = 0; dim < 3; dim++) {
+	    //  x[j][dim] = x[l][dim];
+	    //  v[j][dim] = v[l][dim];
+      //  }
+      //  mass[j] = mass[l];
+      //  j--;
+      //  return false;
+      //}
 
       for (int dim = 0; dim < 3; dim++) aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);;
       minDx = std::min(minDx,dist);
