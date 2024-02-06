@@ -1,5 +1,5 @@
 #include <iomanip>
-
+#include <chrono>
 #include "NBodySimulation.h"
 
 /**
@@ -164,7 +164,6 @@ class NBodySimulationMolecularForces : public NBodySimulation {
  * that you may not alter what the program writes to the standard output.
  */
 int main (int argc, char** argv) {
-  time_t start, end;
   std::cout << std::setprecision(15);
 
   // Code that initialises and runs the simulation.
@@ -173,16 +172,15 @@ int main (int argc, char** argv) {
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
 
-  time(&start); 
+  auto t1 = std::chrono::high_resolution_clock::now();
   while (!nbs.hasReachedEnd()) {
     nbs.updateBody();
     nbs.takeSnapshot();
   }
-  time(&end); 
+  auto t2 = std::chrono::high_resolution_clock::now();
 
   nbs.printSummary();
   nbs.closeParaviewVideoFile();
-  std::cout.precision(15);
-  std::cout << "Time taken by program is : " << end - start << " sec " << std::endl; 
+  std::cout << "Time taken by program is : " << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count() << " millisec " << std::endl; 
   return 0;
 }
