@@ -41,6 +41,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
     double c = 0.01/NumberOfBodies;
+    double dist, nr = 1.0/6;
     double* x2 = new double[3];  // second order x,y,z
     double* x3 = new double[3];  // third order x,y,z
     double* x4 = new double[3];  // fourth order x,y,z
@@ -57,8 +58,6 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       for (int j = 0; j < NumberOfBodies; j++) {
         if (i == j) continue;
         
-        double dist, nr = 1.0/6;
-
         // Step 1
         dist = distance(i,j);
         for (int dim = 0; dim < 3; dim++) a1[dim] = acceleration(j,i,dist,dim);
