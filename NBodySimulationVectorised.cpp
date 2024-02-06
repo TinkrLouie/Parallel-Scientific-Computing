@@ -6,7 +6,7 @@
 class NBodySimulationVectorised : public NBodySimulation {
   public:
     // Runge-Kutta 4th Order. Function as bool because if merge, wont perform rk4 on j 
-    #pragma omp declare simd
+    //#pragma omp declare simd
     bool rk4 (int i, int j) {
       double xTemp[4][3];
       double vTemp[4][3];
@@ -99,7 +99,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
 
-    #pragma omp simd //reduction(max: maxV) reduction(min: minDx) reduction worsens perf!
+    //#pragma omp simd //reduction(max: maxV) reduction(min: minDx) reduction worsens perf!
     for (int i=0; i<NumberOfBodies; i++) {
       for (int j = i+1; j < NumberOfBodies; j++) {
         // Calculate position and velocity by performing RK4 on i and j, if no collision, do the reverse
