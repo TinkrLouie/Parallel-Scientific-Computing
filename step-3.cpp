@@ -33,9 +33,16 @@ int main (int argc, char** argv) {
   nbs.takeSnapshot();
 
   auto t1 = std::chrono::high_resolution_clock::now();
-  while (!nbs.hasReachedEnd()) {
+  if (nbs.getTDelta() > 0.0) {
+    while (!nbs.hasReachedEnd()) {
     nbs.updateBody();
     nbs.takeSnapshot();
+  }
+  }
+  else {
+    while (!nbs.hasReachedEnd()) {
+    nbs.updateBody();
+    }
   }
   auto t2 = std::chrono::high_resolution_clock::now();
 

@@ -107,6 +107,9 @@ void NBodySimulation::setUp (int argc, char** argv) {
   }
 }
 
+double NBodySimulation::getTDelta () {
+  return this->tPlotDelta;
+}
 
 double NBodySimulation::force_calculation (int i, int j, int direction){
   // Euclidean distance
