@@ -115,7 +115,7 @@ int main (int argc, char** argv) {
   std::cout << std::setprecision(15);
 
   // Code that initialises and runs the simulation.
-  NBodySimulationCollision nbs;
+  NBodySimulation nbs;
   nbs.setUp(argc,argv);
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
