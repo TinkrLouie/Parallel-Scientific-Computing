@@ -60,8 +60,8 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         }
         
         minDx = std::min(minDx,dist);
-        
-        #pragma omp parallel private(dim) shared(d, dist) num_threads(3)
+        omp_set_num_threads(3);
+        #pragma omp parallel private(dim) shared(d, dist) 
         {   
             dim = omp_get_thread_num();
             std::cout <<" thread no: " << dim << '\n' << std::endl;
@@ -121,7 +121,8 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         int i, j;
         for (i=0; i<NumberOfBodies; i++) {
             // Possible vectorisation and parallism on inner loop
-            #pragma omp parallel for private(j) reduction(max:maxV) num_threads(max)
+            omp_set_num_threads(max);
+            #pragma omp parallel for private(j) reduction(max:maxV)
             for (j = 0; j < NumberOfBodies; j++) {
                 // Calculate position and velocity by performing RK4 on i and j
                 if (i==j) continue;
