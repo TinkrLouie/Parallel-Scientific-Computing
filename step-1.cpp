@@ -24,7 +24,8 @@ class NBodySimulationCollision: public NBodySimulation {
     maxV   = 0.0;
     minDx  = std::numeric_limits<double>::max();
     double c = 1e-2;
-    double tolerance = 100.0;      // tweak tolerance here
+    double dist;
+    double tolerance = 0.06;      // tweak tolerance here
     // force0 = force along x direction
     // force1 = force along y direction
     // force2 = force along z direction
@@ -41,18 +42,26 @@ class NBodySimulationCollision: public NBodySimulation {
     }
 
     for (int i=0; i<NumberOfBodies; i++) {
-      for (int j = 0; j < NumberOfBodies; j++) {
-        if (i == j) continue;
-        force0[i] += force_calculation(i,j,0);    // Calculate force between i and j
-        force1[i] += force_calculation(i,j,1);
-        force2[i] += force_calculation(i,j,2);
+      for (int j = i+1; j < NumberOfBodies; j++) {
+        double f0, f1, f2;
+        f0 = force_calculation(j,i,0);    // force0[0] to [i]
+        f1 = force_calculation(j,i,1);
+        f2 = force_calculation(j,i,2);
 
-        double dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
+        // Newton's law
+        force0[i] += f0;
+        force1[i] += f1;
+        force2[i] += f2;
+
+        force0[j] -= f0;
+        force1[j] -= f1;
+        force2[j] -= f2;
+
+        dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
                   (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
         // Collision detection
-        if (dist < 1.0) std::cout << dist << std::endl;
         if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
           // Momentum update
           for (int dim = 0; dim < 3; dim++) {
@@ -110,7 +119,7 @@ int main (int argc, char** argv) {
   std::cout << std::setprecision(15);
 
   // Code that initialises and runs the simulation.
-  NBodySimulation nbs;
+  NBodySimulationCollision nbs;
   nbs.setUp(argc,argv);
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
