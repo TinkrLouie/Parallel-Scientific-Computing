@@ -64,7 +64,6 @@ class NBodySimulation {
   NBodySimulation ();
   ~NBodySimulation ();
   
-  double getTDelta ();
   /**
    * Check that the number command line parameters is correct.
    */
