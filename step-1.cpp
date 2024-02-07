@@ -25,7 +25,7 @@ class NBodySimulationCollision: public NBodySimulation {
     minDx  = std::numeric_limits<double>::max();
     double c = 1e-2;
     double dist;
-    double tolerance = 0.0005;      // tweak tolerance here
+    double tolerance = 0.0008;      // tweak tolerance here 0.0005 no for N=6
     // force0 = force along x direction
     // force1 = force along y direction
     // force2 = force along z direction
