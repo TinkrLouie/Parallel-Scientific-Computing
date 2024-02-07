@@ -1,6 +1,6 @@
 #include <iomanip>
 #include <omp.h>
-#include "NBodySimulation.cpp"
+#include "NBodySimulation.h"
 
 /**
  * You can compile this file with
