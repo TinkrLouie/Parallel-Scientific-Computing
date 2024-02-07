@@ -46,9 +46,6 @@ class NBodySimulationCollision: public NBodySimulation {
         force0[i] += force_calculation(i,j,0);    // Calculate force between i and j
         force1[i] += force_calculation(i,j,1);
         force2[i] += force_calculation(i,j,2);
-        // Force acting i by j
-
-        // Force acting on j by i, opposite magnitude hence negative sign
 
         double dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
                   (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
