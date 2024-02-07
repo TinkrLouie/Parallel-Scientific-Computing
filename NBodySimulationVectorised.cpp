@@ -23,7 +23,7 @@ class NBodySimulationVectorised : public NBodySimulation {
       // Collision detection
       if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
         // Momentum update
-        #pragma omp simd private(dim)
+        #pragma omp simd
         for (dim = 0; dim < 3; dim++) {
           x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
           v[i][dim] = (mass[i]*v[i][dim] + mass[j]*v[j][dim]) / (mass[i]+mass[j]);
@@ -36,7 +36,7 @@ class NBodySimulationVectorised : public NBodySimulation {
         const int l = --NumberOfBodies;
 
         // Remove other merged object from list
-        #pragma omp simd private(dim)
+        #pragma omp simd
         for (dim = 0; dim < 3; dim++) {
 	      x[j][dim] = x[l][dim];
 	      v[j][dim] = v[l][dim];
