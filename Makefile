@@ -11,7 +11,7 @@ step-%: step-%
 # If can load a more recent version with
 #     $ module load gcc/12.2
 step-% step-%.o NBodySimulation.o: CXX?=g++
-step-% step-%.o NBodySimulation.o: CXXFLAGS?=-fopenmp -O3 -march=native -std=c++0x -fno-math-errno
+step-% step-%.o NBodySimulation.o: CXXFLAGS?=-fopenmp -O3 -march=native -std=c++0x -fno-math-errno -pg
 NBodySimulation.o: NBodySimulation.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 step-%.o: step-%.cpp

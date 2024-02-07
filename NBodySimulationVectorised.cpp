@@ -5,7 +5,7 @@
 
 class NBodySimulationVectorised : public NBodySimulation {
   public:
-  #pragma omp declare simd
+  //#pragma omp declare simd
   double force_calculation (int i, int j, int direction){
     // Euclidean distance
     const double distance = sqrt(
@@ -42,7 +42,7 @@ class NBodySimulationVectorised : public NBodySimulation {
 
     //#pragma omp parallel for 
     for (int i=0; i<NumberOfBodies; i++) {
-      #pragma omp simd 
+      //#pragma omp simd 
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
         f0 = force_calculation(i,j,0);    // Calculate force between i and j
@@ -61,7 +61,7 @@ class NBodySimulationVectorised : public NBodySimulation {
     }
 
     // Update velocity and position  
-    #pragma omp simd reduction(max:maxV)
+    //#pragma omp simd reduction(max:maxV)
     for (int i = 0; i < NumberOfBodies; i++) {
       
       x[i][0] += timeStepSize *v[i][0];
