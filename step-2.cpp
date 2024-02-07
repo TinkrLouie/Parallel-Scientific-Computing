@@ -28,7 +28,6 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       double d[3];
       double dist, nr = 1.0/6;
       double c = 1e-2;
-      double tolerance = 0.05;      // tweak tolerance here
       
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -36,7 +35,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
       // Collision detection
-      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
+      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
         // Momentum update
         for (int dim = 0; dim < 3; dim++) {
           x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
