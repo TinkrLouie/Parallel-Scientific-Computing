@@ -64,7 +64,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         #pragma omp parallel private(dim) shared(d, dist) num_threads(3)
         {   
             dim = omp_get_thread_num();
-            std::cout << 'thread no: ' << dim << '\n' << std::endl;
+            std::cout <<" thread no: " << dim << '\n' << std::endl;
             aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);
             
 
@@ -143,7 +143,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
 int main (int argc, char** argv) {
 
   std::cout << std::setprecision(15);
-  std::cout << omp_get_max_threads() << std::endl;
+  std::cout << "max: " << omp_get_max_threads() << '\n' << std::endl;
   // Code that initialises and runs the simulation.
   NBodySimulationParallelised nbs;
   nbs.setUp(argc,argv);
