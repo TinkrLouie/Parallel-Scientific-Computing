@@ -62,7 +62,7 @@ class NBodySimulationCollision: public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
         
-        if (dist < 2.75) std::cout << dist << std::endl;
+        if (dist < 2) std::cout << dist << std::endl;
         // Collision detection
         if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
           // Momentum update
