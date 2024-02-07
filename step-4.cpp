@@ -1,6 +1,6 @@
 #include <iomanip>
 #include <omp.h>
-#include "NBodySimulationVectorised.cpp"
+#include "NBodySimulation.cpp"
 
 /**
  * You can compile this file with
@@ -16,7 +16,7 @@
  * "Point Gaussian". Pressing play will play your time steps.
  */
 
-class NBodySimulationParallelised : public NBodySimulationVectorised {
+class NBodySimulationParallelised : public NBodySimulation {
   public:
     // Runge-Kutta 4th Order
     void rk4 (int i, int j) {
