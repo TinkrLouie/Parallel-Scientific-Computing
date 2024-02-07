@@ -61,10 +61,10 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         
         minDx = std::min(minDx,dist);
 
-        omp_set_dynamic(0); 
+        omp_set_num_threads(3);
         
-        #pragma omp parallel private(dim) shared(d, dist) num_threads(3)
-        {            
+        #pragma omp parallel private(dim) shared(d, dist)
+        {   
             dim = omp_get_thread_num();
             std::cout << dim << std::endl;
             aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);
@@ -116,6 +116,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
     }
 
     void updateBody () {
+        std::cout << omp_get_max_threads() << std::endl;
         timeStepCounter++;
         maxV   = 0.0;
         minDx  = std::numeric_limits<double>::max();
