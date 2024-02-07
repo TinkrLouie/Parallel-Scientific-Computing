@@ -11,6 +11,7 @@ class NBodySimulationVectorised : public NBodySimulation {
       double vTemp[4][3];
       double aTemp[4][3];
       double d[3];
+      int dim;
       double dist, nr = 1.0/6;
       double c = 1e-2;
       double tolerance = 0.05;      // tweak tolerance here
