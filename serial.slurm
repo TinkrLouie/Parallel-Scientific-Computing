@@ -9,5 +9,5 @@
 #SBATCH --mem=1G       # memory required, up to 250G on standard nodes.
 #SBATCH --gres=tmp:1G  # temporary disk space required on the compute node ($TMPDIR), up to 400G
 
-chmod u+x ./step-3.sh
-./step-3.sh
+chmod u+x ./step-1.sh
+./step-1.sh
