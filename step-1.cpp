@@ -25,7 +25,7 @@ class NBodySimulationCollision: public NBodySimulation {
     minDx  = std::numeric_limits<double>::max();
     double c = 1e-2;
     double dist;
-    double tolerance = 1.9;      // tweak tolerance here
+    double tolerance = 0.06;      // tweak tolerance here
     // force0 = force along x direction
     // force1 = force along y direction
     // force2 = force along z direction
@@ -44,9 +44,9 @@ class NBodySimulationCollision: public NBodySimulation {
     for (int i=0; i<NumberOfBodies; i++) {
       for (int j = i+1; j < NumberOfBodies; j++) {
         double f0, f1, f2;
-        f0 = force_calculation(j,i,0);    // force0[0] to [i]
-        f1 = force_calculation(j,i,1);
-        f2 = force_calculation(j,i,2);
+        f0 = force_calculation(i,j,0);    // force0[0] to [i]
+        f1 = force_calculation(i,j,1);
+        f2 = force_calculation(i,j,2);
 
         // Newton's law
         force0[i] += f0;
@@ -62,7 +62,6 @@ class NBodySimulationCollision: public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
         
-        if (dist < 2) std::cout << dist << std::endl;
         // Collision detection
         if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
           // Momentum update
