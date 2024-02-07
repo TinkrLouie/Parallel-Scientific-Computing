@@ -114,14 +114,12 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
     }
 
     void updateBody () {
-        int max = omp_get_max_threads();
         timeStepCounter++;
         maxV   = 0.0;
         minDx  = std::numeric_limits<double>::max();
         int i, j;
         for (i=0; i<NumberOfBodies; i++) {
             // Possible vectorisation and parallism on inner loop
-            omp_set_num_threads(max);
             #pragma omp parallel for private(j) reduction(max:maxV)
             for (j = 0; j < NumberOfBodies; j++) {
                 // Calculate position and velocity by performing RK4 on i and j
