@@ -14,7 +14,6 @@ class NBodySimulationVectorised : public NBodySimulation {
       int dim;
       double dist, nr = 1.0/6;
       double c = 1e-2;
-      double tolerance = 0.05;      // tweak tolerance here
       
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -22,7 +21,7 @@ class NBodySimulationVectorised : public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
       // Collision detection
-      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
+      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
         // Momentum update
         #pragma omp simd private(dim)
         for (dim = 0; dim < 3; dim++) {
@@ -90,7 +89,7 @@ class NBodySimulationVectorised : public NBodySimulation {
 
       // Update x and v-----------------------------------------------------
       //#pragma omp barrier
-      #pragma omp for simd private(dim)
+      #pragma omp simd private(dim)
       for (dim = 0; dim < 3; dim++) {
         x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*vTemp[1][dim] + 2*vTemp[2][dim] + vTemp[3][dim]) * timeStepSize;
         v[i][dim] = v[i][dim] + nr*(aTemp[0][dim] + 2*aTemp[1][dim] + 2*aTemp[2][dim] + aTemp[3][dim]) * timeStepSize;
