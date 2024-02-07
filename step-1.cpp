@@ -35,29 +35,27 @@ class NBodySimulationCollision: public NBodySimulation {
 
     // Initialise forces to 0 
     for (int i = 0; i < NumberOfBodies; i++) {
-      force0[i] = force1[i] = force2[i] = 0.0;    
+      force0[i] = 0.0;
+      force1[i] = 0.0;
+      force2[i] = 0.0;    
     }
 
     for (int i=0; i<NumberOfBodies; i++) {
-      for (int j = i+1; j < NumberOfBodies; j++) {
-        double f0, f1, f2, dist;
-        f0 = force_calculation(i,j,0);    // Calculate force between i and j
-        f1 = force_calculation(i,j,1);
-        f2 = force_calculation(i,j,2);
+      for (int j = 0; j < NumberOfBodies; j++) {
+        if (i == j) continue;
+        force0[i] += force_calculation(i,j,0);    // Calculate force between i and j
+        force1[i] += force_calculation(i,j,1);
+        force2[i] += force_calculation(i,j,2);
         // Force acting i by j
-        force0[i] += f0;
-        force1[i] += f1;
-        force2[i] += f2;
+
         // Force acting on j by i, opposite magnitude hence negative sign
-        force0[j] -= f0;
-        force1[j] -= f1;
-        force2[j] -= f2;
-        dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
+
+        double dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
                   (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
         // Collision detection
-        if (dist <= ((c/NumberOfBodies)*(mass[i] + mass[j])+tolerance)){
+        if (dist <= ((c/NumberOfBodies)*(mass[i] + mass[j]))){
           // Momentum update
           for (int dim = 0; dim < 3; dim++) {
             x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
