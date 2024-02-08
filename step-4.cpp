@@ -65,6 +65,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         #pragma omp parallel private(dim) shared(d, dist)
         {
             dim = omp_get_thread_num();
+            std::cout << "Thread: " << dim << std::endl;
             aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);
             
 
