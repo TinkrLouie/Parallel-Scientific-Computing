@@ -120,7 +120,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         int i, j;
         for (i=0; i<NumberOfBodies; i++) {
             // Possible vectorisation and parallism on inner loop
-            //#pragma omp parallel for private(j) reduction(max:maxV)
+            #pragma omp parallel for private(j) reduction(max:maxV)
             for (j = 0; j < NumberOfBodies; j++) {
                 // Calculate position and velocity by performing RK4 on i and j
                 if (i==j) continue;
