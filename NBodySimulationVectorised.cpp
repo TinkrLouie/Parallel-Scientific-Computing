@@ -14,14 +14,14 @@ class NBodySimulationVectorised : public NBodySimulation {
       int dim;
       double dist, nr = 1.0/6;
       double c = 1e-2;
-      
+      double tolerance = 0.001;
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
                   (x[j][1]-x[i][1]) * (x[j][1]-x[i][1]) +
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
       // Collision detection
-      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
+      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
         // Momentum update
         #pragma omp simd
         for (dim = 0; dim < 3; dim++) {
