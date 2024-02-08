@@ -18,8 +18,8 @@
 
 class NBodySimulationParallelised : public NBodySimulationVectorised {
   public:
-    // Runge-Kutta 4th Order
-    void rk14 (int i, int j) {
+    // Runge-Kutta 4th Order // Currently not in use in favor of parallelising updateBody
+    void rk4 (int i, int j) {
         double xTemp[4][3];
         double vTemp[4][3];
         double aTemp[4][3];
@@ -27,7 +27,6 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         int dim;
         double dist;
         double c = 1e-2;
-        double tolerance = 0.0;
 
         // Step 1-------------------------------------------------------------
         dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -35,7 +34,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
                     (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                    );
         // Collision detection
-        if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
+        if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
           // Momentum update
           #pragma omp simd
           for (dim = 0; dim < 3; dim++) {
@@ -63,7 +62,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         minDx = std::min(minDx,dist);
         //omp_set_num_threads(3);
         #pragma omp parallel num_threads(3) private(dim) shared(d, dist)
-        {
+        {   
             dim = omp_get_thread_num();
             std::cout << "Thread: " << dim << std::endl;
             aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);
@@ -118,7 +117,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         int i, j;
         for (i=0; i<NumberOfBodies; i++) {
             // Possible vectorisation and parallism on inner loop
-            #pragma omp parallel for private(j) reduction(max:maxV) num_threads(10)
+            //#pragma omp parallel for private(j) reduction(max:maxV) num_threads(10)
             for (j = 0; j < NumberOfBodies; j++) {
                 //std::cout << "Thread: " << omp_get_thread_num() << std::endl;
                 // Calculate position and velocity by performing RK4 on i and j
