@@ -65,12 +65,11 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         #pragma omp parallel private(dim) shared(d, dist)
         {
             dim = omp_get_thread_num();
-            std::cout << "Thread: " << dim << std::endl;
             aTemp[0][dim] = (x[j][dim]-x[i][dim]) * mass[j] / (dist*dist*dist);
             
 
             // Step 2-------------------------------------------------------------
-            //#pragma omp barrier
+            #pragma omp barrier
             vTemp[1][dim] = v[i][dim] + aTemp[0][dim]*timeStepSize/2;  // compute 2nd order v
             xTemp[1][dim] = x[i][dim] + v[i][dim]*timeStepSize/2; // compute 2nd order x
             d[dim] = x[j][dim] - xTemp[1][dim];  // compute dx,dy,dz of 2nd order x
@@ -83,7 +82,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
 
 
             // Step 3-------------------------------------------------------------
-            //#pragma omp barrier
+            #pragma omp barrier
             vTemp[2][dim] = v[i][dim] + aTemp[1][dim]*timeStepSize/2;  // compute 3rd order v
             xTemp[2][dim] = x[i][dim] + vTemp[1][dim]*timeStepSize/2; // compute 3rd order x
             d[dim] = x[j][dim] - xTemp[2][dim];  // compute dx,dy,dz of 3rd order x
@@ -96,7 +95,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
 
 
             // Step 4-------------------------------------------------------------
-            //#pragma omp barrier
+            #pragma omp barrier
             vTemp[3][dim] = v[i][dim] + aTemp[2][dim]*timeStepSize;  // compute 4th order v
             xTemp[3][dim] = x[i][dim] + vTemp[2][dim]*timeStepSize; // compute 4th order x
             d[dim] = x[j][dim] -  xTemp[3][dim];  // compute dx,dy,dz of 4th order x
@@ -108,7 +107,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
             aTemp[3][dim] = d[dim]*mass[j]/(dist*dist*dist);  // 4th order acceleration of i
 
             // Update x and v-----------------------------------------------------
-            //#pragma omp barrier
+            #pragma omp barrier
             x[i][dim] += (v[i][dim] + 2*vTemp[1][dim] + 2*vTemp[2][dim] + vTemp[3][dim]) * timeStepSize/6;
             v[i][dim] += (aTemp[0][dim] + 2*aTemp[1][dim] + 2*aTemp[2][dim] + aTemp[3][dim]) * timeStepSize/6;
         }
