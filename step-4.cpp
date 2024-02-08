@@ -122,7 +122,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         for (i=0; i<NumberOfBodies; i++) {
             // Possible vectorisation and parallism on inner loop
             
-            #pragma omp parallel for private(j) reduction(max:maxV)
+            #pragma omp parallel for private(j) reduction(max:maxV) num_threads(10)
             for (j = 0; j < NumberOfBodies; j++) {
                 std::cout << "Thread: " << omp_get_thread_num() << std::endl;
                 // Calculate position and velocity by performing RK4 on i and j
@@ -147,8 +147,8 @@ int main (int argc, char** argv) {
   std::cout << std::setprecision(15);
   int max = omp_get_max_threads();
   std::cout << max << std::endl;
-  omp_set_dynamic(0); 
-  omp_set_num_threads(20);
+  //omp_set_dynamic(0); 
+  //omp_set_num_threads(20);
   // Code that initialises and runs the simulation.
   NBodySimulationParallelised nbs;
   nbs.setUp(argc,argv);
