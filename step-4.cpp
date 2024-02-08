@@ -55,6 +55,11 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
           }
           mass[j] = mass[l];
           j--;
+          if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
+            printSummary();
+            closeParaviewVideoFile();
+	          std::exit(0);
+        }
           return;
         }
         
@@ -123,11 +128,6 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
                 if (i==j) continue;
                 rk4(i,j);
                 maxV = std::max(std::sqrt(v[i][0]*v[i][0] + v[i][1]*v[i][1] + v[i][2]*v[i][2]), maxV);
-                if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
-                printSummary();
-                closeParaviewVideoFile();
-	              std::exit(0);
-                }
             }
         }
         t += timeStepSize;

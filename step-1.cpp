@@ -82,6 +82,11 @@ class NBodySimulationCollision: public NBodySimulation {
           }
           mass[j] = mass[l];
           --j;
+          if (NumberOfBodies < 2) {     // Print summary and exit if merge is between last 2 bodies
+            printSummary();
+            closeParaviewVideoFile();
+	          std::exit(0);
+            }
         }
       }
     }
