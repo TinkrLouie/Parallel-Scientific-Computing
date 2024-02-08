@@ -18,8 +18,8 @@
 
 class NBodySimulationParallelised : public NBodySimulationVectorised {
   public:
-    // Runge-Kutta 4th Order // Currently not in use in favor of parallelising updateBody
-    void rk4 (int i, int j) {
+    // Runge-Kutta 4th Order // Currently not in use in favor of parallelising updateBody hence underscore at void _rk4
+    void _rk4 (int i, int j) {
         double xTemp[4][3];
         double vTemp[4][3];
         double aTemp[4][3];
@@ -117,7 +117,7 @@ class NBodySimulationParallelised : public NBodySimulationVectorised {
         int i, j;
         for (i=0; i<NumberOfBodies; i++) {
             // Possible vectorisation and parallism on inner loop
-            //#pragma omp parallel for private(j) reduction(max:maxV) num_threads(10)
+            #pragma omp parallel for private(j) reduction(max:maxV) num_threads(10)
             for (j = 0; j < NumberOfBodies; j++) {
                 //std::cout << "Thread: " << omp_get_thread_num() << std::endl;
                 // Calculate position and velocity by performing RK4 on i and j
