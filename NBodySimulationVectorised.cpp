@@ -53,8 +53,8 @@ class NBodySimulationVectorised : public NBodySimulation {
         // Step 2-------------------------------------------------------------
       #pragma omp simd
       for (dim = 0; dim < 3; dim++) {
-        vTemp[1][dim] = v[i][dim] + aTemp[0][dim]*timeStepSize*0.5;  // compute 2nd order v
-        xTemp[1][dim] = x[i][dim] + v[i][dim]*timeStepSize*0.5; // compute 2nd order x
+        vTemp[1][dim] = v[i][dim] + aTemp[0][dim]*timeStepSize/2;  // compute 2nd order v
+        xTemp[1][dim] = x[i][dim] + v[i][dim]*timeStepSize/2; // compute 2nd order x
         d[dim] = x[j][dim] - xTemp[1][dim];  // compute dx,dy,dz of 2nd order x
       }
       //#pragma omp barrier
@@ -65,8 +65,8 @@ class NBodySimulationVectorised : public NBodySimulation {
       // Step 3-------------------------------------------------------------
       #pragma omp simd
       for (dim = 0; dim < 3; dim++) {
-        vTemp[2][dim] = v[i][dim] + aTemp[1][dim]*timeStepSize*0.5;  // compute 3rd order v
-        xTemp[2][dim] = x[i][dim] + vTemp[1][dim]*timeStepSize*0.5; // compute 3rd order x
+        vTemp[2][dim] = v[i][dim] + aTemp[1][dim]*timeStepSize/2;  // compute 3rd order v
+        xTemp[2][dim] = x[i][dim] + vTemp[1][dim]*timeStepSize/2; // compute 3rd order x
         d[dim] = x[j][dim] - xTemp[2][dim];  // compute dx,dy,dz of 3rd order x
       }
       //#pragma omp barrier

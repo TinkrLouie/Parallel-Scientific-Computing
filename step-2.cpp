@@ -64,8 +64,8 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       
       // Step 2-------------------------------------------------------------
       for (int dim = 0; dim < 3; dim++) {
-        vTemp[1][dim] = v[i][dim] + aTemp[0][dim]*timeStepSize*0.5;  // compute 2nd order v
-        xTemp[1][dim] = x[i][dim] + v[i][dim]*timeStepSize*0.5; // compute 2nd order x
+        vTemp[1][dim] = v[i][dim] + aTemp[0][dim]*timeStepSize/2;  // compute 2nd order v
+        xTemp[1][dim] = x[i][dim] + v[i][dim]*timeStepSize/2; // compute 2nd order x
         d[dim] = x[j][dim] - xTemp[1][dim];  // compute dx,dy,dz of 2nd order x
       }
       dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 2nd order x to j
@@ -73,8 +73,8 @@ class NBodySimulationMolecularForces : public NBodySimulation {
 
       // Step 3-------------------------------------------------------------
       for (int dim = 0; dim < 3; dim++) {
-        vTemp[2][dim] = v[i][dim] + aTemp[1][dim]*timeStepSize*0.5;  // compute 3rd order v
-        xTemp[2][dim] = x[i][dim] + vTemp[1][dim]*timeStepSize*0.5; // compute 3rd order x
+        vTemp[2][dim] = v[i][dim] + aTemp[1][dim]*timeStepSize/2;  // compute 3rd order v
+        xTemp[2][dim] = x[i][dim] + vTemp[1][dim]*timeStepSize/2; // compute 3rd order x
         d[dim] = x[j][dim] - xTemp[2][dim];  // compute dx,dy,dz of 3rd order x
       }
       dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 3rd order x to j
