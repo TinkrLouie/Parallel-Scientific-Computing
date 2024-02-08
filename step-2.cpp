@@ -26,8 +26,9 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       double vTemp[4][3];
       double aTemp[4][3];
       double d[3];
-      double dist, nr = 1.0/6;
+      double dist;
       double c = 1e-2;
+      double tolerance = 0.05;
       
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
@@ -35,7 +36,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
                   (x[j][2]-x[i][2]) * (x[j][2]-x[i][2])
                  );
       // Collision detection
-      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])){
+      if (dist <= (c/NumberOfBodies)*(mass[i] + mass[j])+tolerance){
         // Momentum update
         for (int dim = 0; dim < 3; dim++) {
           x[i][dim] = (mass[i]*x[i][dim] + mass[j]*x[j][dim]) / (mass[i]+mass[j]);
@@ -81,8 +82,8 @@ class NBodySimulationMolecularForces : public NBodySimulation {
 
       // Step 4-------------------------------------------------------------
       for (int dim = 0; dim < 3; dim++) {
-        vTemp[3][dim] = v[i][dim] + aTemp[2][dim]*timeStepSize*0.5;  // compute 4th order v
-        xTemp[3][dim] = x[i][dim] + vTemp[2][dim]*timeStepSize*0.5; // compute 4th order x
+        vTemp[3][dim] = v[i][dim] + aTemp[2][dim]*timeStepSize;  // compute 4th order v
+        xTemp[3][dim] = x[i][dim] + vTemp[2][dim]*timeStepSize; // compute 4th order x
         d[dim] = x[j][dim] -  xTemp[3][dim];  // compute dx,dy,dz of 4th order x
       }
       dist = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);  // distance between 4th order x to j
@@ -91,8 +92,8 @@ class NBodySimulationMolecularForces : public NBodySimulation {
 
       // Update x and v-----------------------------------------------------
       for (int dim = 0; dim < 3; dim++) {
-        x[i][dim] = x[i][dim] + nr*(v[i][dim] + 2*vTemp[1][dim] + 2*vTemp[2][dim] + vTemp[3][dim]) * timeStepSize;
-        v[i][dim] = v[i][dim] + nr*(aTemp[0][dim] + 2*aTemp[1][dim] + 2*aTemp[2][dim] + aTemp[3][dim]) * timeStepSize;
+        x[i][dim] += (v[i][dim] + 2*vTemp[1][dim] + 2*vTemp[2][dim] + vTemp[3][dim]) * timeStepSize/6;
+        v[i][dim] += (aTemp[0][dim] + 2*aTemp[1][dim] + 2*aTemp[2][dim] + aTemp[3][dim]) * timeStepSize/6;
       }
   }
 
