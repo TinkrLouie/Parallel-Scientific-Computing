@@ -1,5 +1,4 @@
 #include <iomanip>
-#include <chrono>
 #include "NBodySimulation.h"
 
 /**
@@ -25,7 +24,7 @@ class NBodySimulationCollision: public NBodySimulation {
     minDx  = std::numeric_limits<double>::max();
     double c = 1e-2;
     double dist;
-    double tolerance = 0.0;      // tweak tolerance here: N=6 0.001
+    double tolerance = 0.02;      // tweak tolerance here: N=6 0.001
     // force0 = force along x direction
     // force1 = force along y direction
     // force2 = force along z direction
@@ -124,21 +123,13 @@ int main (int argc, char** argv) {
   nbs.setUp(argc,argv);
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
-
-  auto t1 = std::chrono::high_resolution_clock::now();
   
   while (!nbs.hasReachedEnd()) {
   nbs.updateBody();
   nbs.takeSnapshot();
   }
-  
-  auto t2 = std::chrono::high_resolution_clock::now();
 
   nbs.printSummary();
   nbs.closeParaviewVideoFile();
-  
- 
-  // Calculating total time taken by the program. 
-  std::cout << "Time taken by program is : " << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count() << " millisec " << std::endl;
   return 0;
 };

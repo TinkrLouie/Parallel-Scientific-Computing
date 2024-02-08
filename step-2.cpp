@@ -1,5 +1,4 @@
 #include <iomanip>
-#include <chrono>
 #include "NBodySimulation.h"
 
 /**
@@ -130,18 +129,13 @@ int main (int argc, char** argv) {
   nbs.setUp(argc,argv);
   nbs.openParaviewVideoFile();
   nbs.takeSnapshot();
-
-  auto t1 = std::chrono::high_resolution_clock::now();
   
   while (!nbs.hasReachedEnd()) {
   nbs.updateBody();
   nbs.takeSnapshot();
   }
- 
-  auto t2 = std::chrono::high_resolution_clock::now();
 
   nbs.printSummary();
   nbs.closeParaviewVideoFile();
-  std::cout << "Time taken by program is : " << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count() << " millisec " << std::endl; 
   return 0;
 }
