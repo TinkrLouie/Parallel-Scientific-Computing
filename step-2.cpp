@@ -28,7 +28,7 @@ class NBodySimulationMolecularForces : public NBodySimulation {
       double d[3];
       double dist;
       double c = 1e-2;
-      double tolerance = 0.05;
+      double tolerance = 0.0;
       
       // Step 1-------------------------------------------------------------
       dist = sqrt((x[j][0]-x[i][0]) * (x[j][0]-x[i][0]) +
